@@ -17,7 +17,7 @@ public class Player extends GameObject{
     private int max, min;
 
     public Player(Bitmap res, int w, int h, int numFrames){
-        x = 50;
+        x = 20;
         y = GamePanel.HEIGHT/2;
         dy = 0;
         score = 0;
@@ -65,9 +65,7 @@ public class Player extends GameObject{
 
     public void draw(Canvas canvas){
 
-        if(y< 0 ) y = 0;
-        else if(y > GamePanel.HEIGHT - height ){
-            y = GamePanel.HEIGHT - height;
+        if(y > GamePanel.HEIGHT - (height + 24) || y < 25){
             setPlaying(false);
         }
         canvas.drawBitmap(animation.getImage(), x,y,null );
