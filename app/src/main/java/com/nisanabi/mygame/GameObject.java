@@ -9,7 +9,7 @@ public abstract class GameObject {
 
     protected int x;
     protected int y;
-    protected  double dy;
+    protected  int dy;
     protected int dx;
     protected int width;
     protected int height;

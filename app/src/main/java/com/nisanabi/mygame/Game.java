@@ -19,7 +19,7 @@ public class Game extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(new GamePanel(this));
-    }
+   }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

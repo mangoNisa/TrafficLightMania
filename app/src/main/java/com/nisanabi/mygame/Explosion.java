@@ -31,12 +31,17 @@ public class Explosion {
             image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
         }
         animation.setFrames(image);
-        animation.setDelay(100);
+        animation.setDelay(10);
     }
 
     public void update(){
-        if(!animation.playedOnce()){
+        if((y < GamePanel.HEIGHT)){
             animation.update();
+            if(y > GamePanel.HEIGHT){
+                y = GamePanel.HEIGHT;
+            }else {
+                y += 15;
+            }
         }
     }
 
