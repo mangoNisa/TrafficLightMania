@@ -23,8 +23,8 @@ public class Player extends GameObject{
         score = 0;
         height = h;
         width = w;
-        max = 7;
-        min = -7;
+        max = 8;
+        min = -8;
 
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
@@ -65,7 +65,7 @@ public class Player extends GameObject{
 
     public void draw(Canvas canvas){
 
-        if(y > GamePanel.HEIGHT - (height + 24) || y < 25){
+        if(y > GamePanel.HEIGHT - (height + 30) || y < 25){
             setPlaying(false);
         }
         canvas.drawBitmap(animation.getImage(), x,y,null );
@@ -90,8 +90,8 @@ public class Player extends GameObject{
 
     public void resetDY(){
         dy = 0;
-        max = 7;
-        min = -7;
+        max = 8;
+        min = -8;
     }
 
     public void setMaxMin(int max, int min){

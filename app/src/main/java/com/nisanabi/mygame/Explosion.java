@@ -35,13 +35,9 @@ public class Explosion {
     }
 
     public void update(){
-        if((y < GamePanel.HEIGHT)){
+        if(!animation.playedOnce()){
             animation.update();
-            if(y > GamePanel.HEIGHT){
-                y = GamePanel.HEIGHT;
-            }else {
-                y += 15;
-            }
+            x -= 7;
         }
     }
 

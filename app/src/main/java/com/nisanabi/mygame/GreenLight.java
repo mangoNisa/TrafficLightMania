@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import java.util.Random;
 
 /**
- * Created by hello on 12/12/2015.
+ * Created by hello on 11/12/2015.
  */
 public class GreenLight extends GameObject{
 
@@ -23,14 +23,9 @@ public class GreenLight extends GameObject{
         height = h;
         score = s;
 
-        speed = 7 + (int) (rand.nextDouble()*score);
+        speed = 7 ;
 
-        //cap missle speed
-        if(speed%3==0 ){
-            speed = 10;
-        }else if(speed >= 20){
-            speed = 20;
-        }
+
 
         Bitmap[] image = new Bitmap[numFrames];
 
@@ -38,7 +33,7 @@ public class GreenLight extends GameObject{
 
         //loop through the images assignment element of array to a missile animation
         for(int i = 0; i<image.length; i++){
-            image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
+            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
         }
 
         animation.setFrames(image);

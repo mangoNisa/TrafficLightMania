@@ -23,7 +23,7 @@ public class Missile extends GameObject{
         height = h;
         score = s;
 
-        speed = 7 + (int) (rand.nextDouble()*score/30);
+        speed = 9 + (int) (rand.nextDouble()*score/30);
 
         //cap missle speed
         if(speed >= 40){
@@ -36,7 +36,7 @@ public class Missile extends GameObject{
 
         //loop through the images assignment element of array to a missile animation
         for(int i = 0; i<image.length; i++){
-            image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
+            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
         }
 
         animation.setFrames(image);
