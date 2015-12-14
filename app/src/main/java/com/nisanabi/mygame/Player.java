@@ -23,8 +23,8 @@ public class Player extends GameObject{
         score = 0;
         height = h;
         width = w;
-        max = 8;
-        min = -8;
+        max = 20;
+        min = -20;
 
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
@@ -45,8 +45,8 @@ public class Player extends GameObject{
 
     public void update(){
         long elapsed = (System.nanoTime()-startTime)/1000000;
-        if(elapsed>100){
-            //score++;
+        if(elapsed>1000){
+            score++;
             startTime = System.nanoTime();
         }
         animation.update();
@@ -90,8 +90,8 @@ public class Player extends GameObject{
 
     public void resetDY(){
         dy = 0;
-        max = 8;
-        min = -8;
+        max = 20;
+        min = -20;
     }
 
     public void setMaxMin(int max, int min){
