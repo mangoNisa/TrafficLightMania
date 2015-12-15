@@ -8,19 +8,14 @@ import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageButton play;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+   }
 
-
-    }
-
-    protected void playGame(View v){
-
-        Intent startGame = new Intent(getApplicationContext(), Game.class);
-        startActivity(startGame);
+    public void play_game(View view){
+        //Intent i = new Intent(getApplicationContext(), Game.class );
+        //startActivity(i);
     }
 }

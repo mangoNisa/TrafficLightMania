@@ -1,6 +1,9 @@
 package com.nisanabi.mygame;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +29,7 @@ public class Game extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_game, menu);
         return true;
+
     }
 
     @Override
@@ -41,5 +45,10 @@ public class Game extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startnew() {
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(i);
     }
 }

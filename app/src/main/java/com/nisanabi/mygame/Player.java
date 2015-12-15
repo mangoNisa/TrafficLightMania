@@ -23,8 +23,8 @@ public class Player extends GameObject{
         score = 0;
         height = h;
         width = w;
-        max = 20;
-        min = -20;
+        max = 10;
+        min = -14;
 
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
@@ -35,7 +35,7 @@ public class Player extends GameObject{
 
 
         animation.setFrames(image);
-        animation.setDelay(10);
+        animation.setDelay(15);
         startTime = System.nanoTime();
     }
 
@@ -46,26 +46,28 @@ public class Player extends GameObject{
     public void update(){
         long elapsed = (System.nanoTime()-startTime)/1000000;
         if(elapsed>1000){
-            score++;
+            //score++;
             startTime = System.nanoTime();
         }
         animation.update();
 
         if(up){
             dy -=  1;
+            y -=15;
         }else{
             dy += 1;
+            y+= dy*2;
+
         }
 
         if(dy>max) dy = max;
         if(dy<min) dy = min;
 
-        y+= dy*2;
     }
 
     public void draw(Canvas canvas){
 
-        if(y > GamePanel.HEIGHT - (height + 30) || y < 25){
+        if(y > GamePanel.HEIGHT - (height + 25) || y < 25){
             setPlaying(false);
         }
         canvas.drawBitmap(animation.getImage(), x,y,null );
@@ -90,8 +92,8 @@ public class Player extends GameObject{
 
     public void resetDY(){
         dy = 0;
-        max = 20;
-        min = -20;
+        max = 10;
+        min = -14;
     }
 
     public void setMaxMin(int max, int min){

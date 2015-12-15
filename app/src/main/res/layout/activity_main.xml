@@ -28,7 +28,7 @@
         android:layout_marginBottom="102dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="playGame"/>
+        android:onClick="play_game"/>
 
 
 
