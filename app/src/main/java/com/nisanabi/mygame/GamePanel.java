@@ -115,6 +115,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         birds.add(R.drawable.bird);
         birds.add(R.drawable.bird2);
         birds.add(R.drawable.bird3);
+        birds.add(R.drawable.bird4);
+        birds.add(R.drawable.bird5);
 
         smokeStartTime=  System.nanoTime();
         missileStartTime = System.nanoTime();
@@ -132,7 +134,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event)
     {
         if(event.getAction()==MotionEvent.ACTION_DOWN){
-            if(!player.getPlaying() && newGameCreated && reset)
+            if(!player.getPlaying() && newGameCreated4 && reset)
             {
 
                 player.setPlaying(true);
@@ -188,7 +190,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }*/
            // }else if(!greenOnly){
 
-                if (missileElapsed > (1000) && !greenOnly) {
+                if (missileElapsed > (800) && !greenOnly) {
 
                     if(countbird > birds.size()-1){
                         countbird = 0;
@@ -477,9 +479,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             canvas.drawText(best1, bounds.left, 240, paint);
  //////////////////////////////////////////////////////////////////////////////////////////
 
-
-            canvas.drawRoundRect(100, 360, WIDTH - 100, 660, 20, 20, paint);
             paint.setColor(Color.WHITE);
+            canvas.drawRoundRect(70, 330, WIDTH - 70, 530, 20, 20, paint);
             paint.setTextSize(35);
 
             paint.setColor(Color.BLACK);
@@ -487,31 +488,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             String playit = "PRESS TO PLAY";
             bounds.right = paint.measureText(playit, 0, playit.length());
             bounds.left += (rect.width() - bounds.right)/2.0f;
-            canvas.drawText(playit, bounds.left, 120, paint);
+            canvas.drawText(playit, bounds.left, 380, paint);
 
             paint.setTextSize(20);
             bounds = new RectF(rect);
             String h = "Press and hold to go up" ;
             bounds.right = paint.measureText(h, 0, h.length());
             bounds.left += (rect.width() - bounds.right)/2.0f;
-            canvas.drawText(h, bounds.left, 160, paint);
+            canvas.drawText(h, bounds.left, 420, paint);
 
             String d = "Release to go down" ;
             bounds = new RectF(rect);
             bounds.right = paint.measureText(d, 0, d.length());
             bounds.left += (rect.width() - bounds.right)/2.0f;
-            canvas.drawText(d, bounds.left, 200, paint);
+            canvas.drawText(d, bounds.left, 460, paint);
 
             String i = "Avoid the birds & collect the rainbows";
             bounds = new RectF(rect);
             bounds.right = paint.measureText(i, 0, i.length());
             bounds.left += (rect.width() - bounds.right) / 2.0f;
-            canvas.drawText(i, bounds.left, 240, paint);
-
-
-
-
-
+            canvas.drawText(i, bounds.left, 500, paint);
         }
     }
 }
