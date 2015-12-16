@@ -22,12 +22,17 @@ public class SplashScreen extends AppCompatActivity {
             @Override
             public void run(){
                 try {
+
+                    Intent i = new Intent(getApplicationContext(), Game.class );
+
+                    startActivity(i);
+
                     sleep(3000);
+
                 } catch (InterruptedException e) {
 
                 }
-                Intent i = new Intent(getApplicationContext(), Game.class );
-                startActivity(i);
+
                 finish();
             }
         };

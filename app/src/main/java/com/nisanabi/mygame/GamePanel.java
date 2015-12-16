@@ -2,12 +2,16 @@ package com.nisanabi.mygame;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -39,6 +43,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     private ArrayList<Integer> birds;
 
+    int x1;
+    int x2;
+    int y1;
+    int y2;
 
     private Random rand = new Random();
 
@@ -97,11 +105,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void surfaceCreated(SurfaceHolder holder){
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.grassbg1));
-        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.car), 128, 80, 3);
+        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.car), 111, 70, 3);
         smoke = new ArrayList<SmokePuff>();
         missiles = new ArrayList<Missile>();
         missiles2 = new ArrayList<GreenLight>();
         missiles3 = new ArrayList<GreenLight>();
+
         birds = new ArrayList<Integer>();
         birds.add(R.drawable.bird);
         birds.add(R.drawable.bird2);
@@ -125,8 +134,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         if(event.getAction()==MotionEvent.ACTION_DOWN){
             if(!player.getPlaying() && newGameCreated && reset)
             {
+
                 player.setPlaying(true);
                 player.setUp(true);
+
             }
             if(player.getPlaying()){
                 if(!started) started = true;
@@ -179,13 +190,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 if (missileElapsed > (1000) && !greenOnly) {
 
-                    if(countbird > 2){
+                    if(countbird > birds.size()-1){
                         countbird = 0;
                     }
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), birds.get(countbird)),
-                            WIDTH + 500, (int) (rand.nextDouble() * (HEIGHT - (100)) + 30), 59, 50, player.getScore(), 8));
-                    countbird++;
 
+                    if(missiles.size()==0)
+                    {
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), birds.get(countbird)),
+                                WIDTH + 500, HEIGHT/2, 44, 41, player.getScore(), 8));
+                    }else {
+                        int position = (int) (rand.nextDouble() * (HEIGHT - (100)) + 30);
+                        missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), birds.get(countbird)),
+                                WIDTH + 500, position , 44, 41, player.getScore(), 8));
+                        countbird++;
+                    }
                     //reset timer
                     missileStartTime = System.nanoTime();
                 }
@@ -323,6 +341,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         }
         return false;
     }
+
     @Override
     public void draw(Canvas canvas)
     {
@@ -330,11 +349,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         final float scaleFactorY = getHeight()/(HEIGHT*1.f);
 
         if(canvas!=null) {
+
+
+
             final int savedState = canvas.save();
             canvas.scale(scaleFactorX, scaleFactorY);
+
             bg.draw(canvas);
 
-            if(!dissapear) {
+            if(!dissapear && started) {
                 player.draw(canvas);
             }
             //draw smokepuffs
@@ -397,8 +420,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             newHighest = true;
             SplashScreen.setHighScore(lastscore);
         }
-
-
         //create initial borders
         newGameCreated = true;
     }
@@ -415,30 +436,80 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         }
 
         if(!player.getPlaying() && newGameCreated && reset) {
+
+            Rect rect = new Rect();
+            rect.set(60, 30, WIDTH - 60, HEIGHT);
+            paint.setColor(Color.WHITE);
+
+
+            canvas.drawRoundRect(100, 80, WIDTH - 100, 260, 20, 20, paint);
+            paint.setColor(Color.MAGENTA);
             paint.setTextSize(40);
-            if(newHighest){
+
+            if(newHighest) {
                 paint.setTextSize(60);
                 newHighest = false;
             }
-            Rect rect = new Rect();
-            int c = Color.parseColor("#99eb47");
-            paint.setColor(c);
 
-            rect.set(60, 60, WIDTH - 60, 260);
-            canvas.drawRect(rect, paint);
+            paint.setColor(Color.BLACK);
+            RectF bounds = new RectF(rect);
+            String score = "Score";
+            bounds.right = paint.measureText(score, 0, score.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(score, bounds.left, 120, paint);
 
-            rect.set(60, 320, WIDTH - 60, HEIGHT - 60);
-            canvas.drawRect(rect, paint);
+            bounds = new RectF(rect);
+            String lscore = "" + lastscore;
+            bounds.right = paint.measureText(lscore, 0, lscore.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(lscore, bounds.left, 160, paint);
+
+            String best = "Best"  ;
+            bounds = new RectF(rect);
+            bounds.right = paint.measureText(best, 0, best.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(best, bounds.left, 200, paint);
+
+            String best1 = "" + SplashScreen.getHighScore();
+            bounds = new RectF(rect);
+            bounds.right = paint.measureText(best1, 0, best1.length());
+            bounds.left += (rect.width() - bounds.right) / 2.0f;
+            canvas.drawText(best1, bounds.left, 240, paint);
+ //////////////////////////////////////////////////////////////////////////////////////////
+
+
+            canvas.drawRoundRect(100, 360, WIDTH - 100, 660, 20, 20, paint);
             paint.setColor(Color.WHITE);
+            paint.setTextSize(35);
 
-            canvas.drawText("Score: " + lastscore, WIDTH / 2 - 110, 120, paint);
-            canvas.drawText("Best: " + SplashScreen.getHighScore(), WIDTH / 2 - 95, 200, paint);
-            paint.setTextSize(40);
-            canvas.drawText("PRESS TO PLAY", WIDTH / 2 - 180, 600, paint);
-            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            paint.setTextSize(25);
-            canvas.drawText("DONT KILL THE BIRDS", WIDTH / 2 - 180, 650, paint);
-            canvas.drawText("COLLECT RAINBOWS", WIDTH / 2 - 180, 700, paint);
+            paint.setColor(Color.BLACK);
+            bounds = new RectF(rect);
+            String playit = "PRESS TO PLAY";
+            bounds.right = paint.measureText(playit, 0, playit.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(playit, bounds.left, 120, paint);
+
+            paint.setTextSize(20);
+            bounds = new RectF(rect);
+            String h = "Press and hold to go up" ;
+            bounds.right = paint.measureText(h, 0, h.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(h, bounds.left, 160, paint);
+
+            String d = "Release to go down" ;
+            bounds = new RectF(rect);
+            bounds.right = paint.measureText(d, 0, d.length());
+            bounds.left += (rect.width() - bounds.right)/2.0f;
+            canvas.drawText(d, bounds.left, 200, paint);
+
+            String i = "Avoid the birds & collect the rainbows";
+            bounds = new RectF(rect);
+            bounds.right = paint.measureText(i, 0, i.length());
+            bounds.left += (rect.width() - bounds.right) / 2.0f;
+            canvas.drawText(i, bounds.left, 240, paint);
+
+
+
 
 
         }

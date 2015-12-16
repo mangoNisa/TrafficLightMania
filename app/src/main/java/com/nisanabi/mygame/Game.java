@@ -47,8 +47,4 @@ public class Game extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void startnew() {
-        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(i);
-    }
 }

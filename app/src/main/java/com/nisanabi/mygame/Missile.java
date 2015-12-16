@@ -26,8 +26,8 @@ public class Missile extends GameObject{
         speed = 10 + (int) (rand.nextDouble()*score);
 
         //cap missle speed
-        if(speed >= 20){
-            speed = 20;
+        if(speed >= 16){
+            speed = 16;
         }
 
         Bitmap[] image = new Bitmap[numFrames];
@@ -41,7 +41,7 @@ public class Missile extends GameObject{
 
         animation.setFrames(image);
         //if missle is faster, then delay will decreate so animation will be faster
-        animation.setDelay(30);
+        animation.setDelay(20);
     }
 
     public void update(){
