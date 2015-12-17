@@ -1,8 +1,6 @@
 package com.nisanabi.mygame;
+
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -41,6 +39,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<GreenLight> missiles2;
     private ArrayList<GreenLight> missiles3;
 
+
+    float scaleFactorX ;
+     float scaleFactorY ;
+
+    Rect clipBounds;
+    Rect shoot;
     private ArrayList<Integer> birds;
 
     int x1;
@@ -56,6 +60,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private boolean botDown = true;
     private boolean newGameCreated;
     private boolean newHighest = false;
+    private boolean startShooting = false;
     //increase to slow down difficulty progression, decrease to speed up difficulty progression
     private int progressDenom = 20;
 
@@ -72,7 +77,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public GamePanel(Context context)
     {
         super(context);
-
 
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
@@ -134,7 +138,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public boolean onTouchEvent(MotionEvent event)
     {
         if(event.getAction()==MotionEvent.ACTION_DOWN){
-            if(!player.getPlaying() && newGameCreated4 && reset)
+            x1 = (int)(event.getX()/ scaleFactorX) + clipBounds.left;
+            y1= (int)(event.getY()/scaleFactorY) + clipBounds.top;
+
+            if(!player.getPlaying()&& newGameCreated && reset)
             {
 
                 player.setPlaying(true);
@@ -142,14 +149,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
             }
             if(player.getPlaying()){
-                if(!started) started = true;
-                reset = false;
-                player.setUp(true);
+
+                if(started){
+                    if(shoot.contains(x1,y1)) {
+                        startShooting = true;
+                    }
+                }
+                if (!started) started = true;
+
+
+                    reset = false;
+                    player.setUp(true);
+
             }
             return true;
         }
         if(event.getAction()==MotionEvent.ACTION_UP)
         {
+
             player.setUp(false);
             return true;
         }
@@ -176,7 +193,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             long missile2Elapsed = (System.nanoTime()-missile2StartTime)/1000000;
             long rainbowElapsed = (System.nanoTime()-rainbowStartTime)/1000000;
             long rainbowElapsed2 = (System.nanoTime()-rainbow2StartTime)/1000000;
+
+            if(startShooting){
+                smoke.add(new SmokePuff(player.getX() + player.getWidth(), player.getY()+ (player.getHeight()/2)));
+                startShooting = false;
+            }
            /* if(greenOnly && rainbowElapsed > 800) {
+
 
                 missiles2.add(new GreenLight(BitmapFactory.decodeResource(getResources(), R.drawable.rainbow),
                         WIDTH + 500, (int) (rand.nextDouble() * (HEIGHT - (100)) + 30), 60, 60, player.getScore(), 1));
@@ -296,12 +319,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
-            //add smoke puffs on timer
-            long elapsed = (System.nanoTime() - smokeStartTime)/1000000;
-            if(elapsed > 120){
-                smoke.add(new SmokePuff(player.getX(), player.getY()+10));
-                smokeStartTime = System.nanoTime();
-            }
 
             for(int i = 0; i<smoke.size();i++)
             {
@@ -310,6 +327,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     smoke.remove(i);
                 }
+
+
             }
         } else{
 
@@ -347,16 +366,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void draw(Canvas canvas)
     {
-        final float scaleFactorX = getWidth()/(WIDTH*1.f);
-        final float scaleFactorY = getHeight()/(HEIGHT*1.f);
+
 
         if(canvas!=null) {
 
-
+            scaleFactorX = getWidth()/(WIDTH*1.f);
+            scaleFactorY = getHeight()/(HEIGHT*1.f);
 
             final int savedState = canvas.save();
             canvas.scale(scaleFactorX, scaleFactorY);
-
+            clipBounds = canvas.getClipBounds();
             bg.draw(canvas);
 
             if(!dissapear && started) {
@@ -365,7 +384,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             //draw smokepuffs
             for(SmokePuff sp: smoke)
             {
-                //sp.draw(canvas);
+                sp.draw(canvas);
             }
             //draw missiles
             for(Missile m: missiles)
@@ -404,7 +423,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         missiles.clear();
         missiles2.clear();
         missiles3.clear();
-
+        smoke.clear();
+        player.setPlaying(false);
         smoke.clear();
         greenOnly = false;
         greenCount = 0;
@@ -412,7 +432,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         maxBorderHeight = 30;
 
         player.resetDY();
-
+        started = false;
         lastscore = player.getScore();
         player.resetScore();
         player.setY(HEIGHT / 2);
@@ -435,6 +455,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         if(player.getPlaying()){
             canvas.drawText("" + (player.getScore()), (WIDTH / 2) - 30, 60, paint);
+
+            shoot = new Rect(WIDTH-100, HEIGHT-100, WIDTH-50, HEIGHT-50);
+            paint.setColor(Color.RED);
+            canvas.drawRect(shoot, paint);
         }
 
         if(!player.getPlaying() && newGameCreated && reset) {
@@ -508,6 +532,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bounds.right = paint.measureText(i, 0, i.length());
             bounds.left += (rect.width() - bounds.right) / 2.0f;
             canvas.drawText(i, bounds.left, 500, paint);
+
+            Rect rr = new Rect(x1, y1, x1+10, y1+10);
+            paint.setColor(Color.BLUE);
+            canvas.drawRect(rr, paint);
         }
     }
 }

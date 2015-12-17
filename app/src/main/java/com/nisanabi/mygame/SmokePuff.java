@@ -19,7 +19,7 @@ public class SmokePuff extends GameObject{
     }
 
     public void update(){
-        x -= 20;
+        x += 30;
     }
 
     public void draw(Canvas canvas){

@@ -14,17 +14,18 @@ public class Player extends GameObject{
     private boolean playing;
     private Animation animation = new Animation();
     private long startTime;
-    private int max, min;
+    private int max, min, dx;
 
     public Player(Bitmap res, int w, int h, int numFrames){
         x = 20;
         y = GamePanel.HEIGHT/2;
-        dy = -10;
+        dy = -0;
         score = 0;
         height = h;
         width = w;
         max = 10;
         min = -14;
+        dx = 0;
 
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
@@ -59,8 +60,12 @@ public class Player extends GameObject{
 
         }
 
-        if(dy>max) dy = max;
-        if(dy<min) dy = min;
+        if(dy>7) dy = 7;
+        if(dy<-7) dy = -7;
+
+
+
+
 
     }
 
@@ -90,7 +95,8 @@ public class Player extends GameObject{
     }
 
     public void resetDY(){
-        dy = -10;
+        dy = 0;
+        dx = 0;
         max = 10;
         min = -14;
     }
