@@ -13,7 +13,6 @@ public class SmokePuff extends GameObject{
 
     public SmokePuff(int x, int y){
 
-        r = 10;
         super.x = x;
         super.y = y;
     }
@@ -28,9 +27,6 @@ public class SmokePuff extends GameObject{
         paint.setColor(Color.MAGENTA);
         paint.setStyle(Paint.Style.FILL);
 
-        canvas.drawCircle(x - r, y - r, r, paint);
-        canvas.drawCircle(x-r+4, y-r-4, r, paint);
-        canvas.drawCircle(x-r+8, y-r+2, r, paint);
-
+        canvas.drawRect(x+40 , y-5 , x+60, y+5, paint);
     }
 }
