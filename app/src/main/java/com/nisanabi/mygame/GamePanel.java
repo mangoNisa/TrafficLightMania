@@ -32,7 +32,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private MainThread thread;
     private Background bg;
     private Player player;
-    private ArrayList<SmokePuff> smoke;
+    private ArrayList<Arrow> smoke;
     private ArrayList<Missile> missiles;
     private ArrayList<Missile> special;
     private ArrayList<GreenLight> rainbow;
@@ -174,7 +174,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
             //add missiles on timer
             if(startShooting){
-                smoke.add(new SmokePuff(player.getX() + player.getWidth(), player.getY()+ (player.getHeight()/2)));
+                smoke.add(new Arrow(BitmapFactory.decodeResource(getResources(), R.drawable.arrow),player.getX() + player.getWidth(), player.getY()+ (player.getHeight()/2)));
                 startShooting = false;
             }
 
@@ -359,7 +359,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 player.draw(canvas);
             }
             //draw smokepuffs
-            for(SmokePuff sp: smoke)
+            for(Arrow sp: smoke)
             {
                 sp.draw(canvas);
             }

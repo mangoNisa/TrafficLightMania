@@ -1,20 +1,25 @@
 package com.nisanabi.mygame;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 
 /**
  * Created by hello on 11/12/2015.
  */
-public class SmokePuff extends GameObject{
+public class Arrow extends GameObject{
 
-    public int r;
+   private Bitmap image;
 
-    public SmokePuff(int x, int y){
-
+    public Arrow(Bitmap res, int x, int y){
         super.x = x;
         super.y = y;
+        image = res;
+
     }
 
     public void update(){
@@ -27,6 +32,8 @@ public class SmokePuff extends GameObject{
         paint.setColor(Color.MAGENTA);
         paint.setStyle(Paint.Style.FILL);
 
-        canvas.drawRect(x+40 , y-5 , x+60, y+5, paint);
+        canvas.drawBitmap(image , x , y, null);
     }
+
+
 }
