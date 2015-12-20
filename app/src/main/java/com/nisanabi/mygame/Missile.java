@@ -15,6 +15,7 @@ public class Missile extends GameObject{
     private Random rand = new Random();
     private Animation animation = new Animation();
     private Bitmap spritesheet;
+    private boolean drop;
 
     public Missile(Bitmap res, int x, int y, int w, int h, int s, int numFrames){
         super.x = x;
@@ -22,6 +23,7 @@ public class Missile extends GameObject{
         width = w;
         height = h;
         score = s;
+        drop = false;
 
         speed = 10 + (int) (rand.nextDouble()*score);
 
@@ -45,7 +47,11 @@ public class Missile extends GameObject{
     }
 
     public void update(){
-        x-=speed;
+        if(!drop) {
+            x -= speed;
+        }else{
+            y += 16;
+        }
         animation.update();
     }
 
@@ -60,5 +66,9 @@ public class Missile extends GameObject{
 
         //offset a bit for more realisitic collision detection
         return width-10;
+    }
+
+    public void drop(boolean b){
+        drop = b;
     }
 }

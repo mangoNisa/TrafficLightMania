@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * Created by hello on 11/12/2015.
  */
-public class GreenLight extends GameObject{
+public class Rainbow extends GameObject{
 
     private int score;
     private int speed;
@@ -16,7 +16,7 @@ public class GreenLight extends GameObject{
     private Animation animation = new Animation();
     private Bitmap spritesheet;
 
-    public GreenLight(Bitmap res, int x, int y, int w, int h, int s, int numFrames){
+    public Rainbow(Bitmap res, int x, int y, int w, int h, int s, int numFrames){
         super.x = x;
         super.y = y;
         width = w;

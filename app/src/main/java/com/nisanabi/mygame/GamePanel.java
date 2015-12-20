@@ -35,7 +35,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<Arrow> smoke;
     private ArrayList<Missile> missiles;
     private ArrayList<Missile> special;
-    private ArrayList<GreenLight> rainbow;
+    private ArrayList<Rainbow> rainbow;
 
 
     float scaleFactorX ;
@@ -139,14 +139,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(started){
                     if(shoot.contains(x1,y1)) {
                         startShooting = true;
+                    }else {
+                        reset = false;
+                        player.setUp(true);
                     }
                 }
+
                 if (!started) started = true;
-
-
-                    reset = false;
-                    player.setUp(true);
-
             }
             return true;
         }
@@ -179,7 +178,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             }
 
             if(greenOnly && rainbowElapsed > 500) {
-                rainbow.add(new GreenLight(BitmapFactory.decodeResource(getResources(), R.drawable.rainbow),
+                rainbow.add(new Rainbow(BitmapFactory.decodeResource(getResources(), R.drawable.rainbow),
                         WIDTH + 500, (int) (rand.nextDouble() * (HEIGHT - (100)) + 30), 60, 60, player.getScore(), 1));
 
                 greenCount++;
@@ -204,7 +203,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                         missiles.add(new Missile(BitmapFactory.decodeResource(getResources(), birds.get(countbird)),
                                 WIDTH + 500, position , 44, 41, player.getScore(), 8));
                     }
-                    if(countbird++ != birds.size()-1) countbird = 0;
+                    if(countbird++ >= birds.size()-1) countbird = 0;
 
                     //reset timer
                     missileStartTime = System.nanoTime();
@@ -228,14 +227,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 if(collision(missiles.get(i),player))
                 {
-                    missiles.remove(i);
+                    missiles.get(i).drop(true);
                     player.setPlaying(false);
                     break;
                 }
 
                 for(int j = 0; j<smoke.size(); j++) {
                     if (collision(missiles.get(i), smoke.get(j))) {
-                        missiles.remove(i);
+                        missiles.get(i).drop(true);
                         smoke.remove(j);
                         break;
                     }
@@ -287,14 +286,25 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                     if (collision(special.get(i), smoke.get(j))) {
                         greenOnly = true;
-                        special.remove(i);
-                        special.clear();
-                        missiles.clear();
+                        for(int a = 0; a < special.size(); a++){
+                            special.get(a).drop(false);
+                        }
+                        for(int a = 0; a < missiles.size(); a++){
+                            missiles.get(a).drop(true);
+                        }
                         break;
                     }
                 }
 
-                if (special.get(i).getX() < -50) {
+                if(collision(special.get(i),player))
+                {
+                    special.get(i).drop(true);
+                    player.setPlaying(false);
+                    break;
+                }
+
+
+                if (special.get(i).getX() < -50 || special.get(i).getY() > HEIGHT +40) {
                     special.remove(i);
                     break;
                 }
@@ -373,7 +383,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 m.draw(canvas);
             }
 
-            for(GreenLight m: rainbow)
+            for(Rainbow m: rainbow)
             {
                 m.draw(canvas);
             }
@@ -391,7 +401,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         }
     }
-
 
     public void newGame()
     {
