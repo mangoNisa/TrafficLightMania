@@ -32,7 +32,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private MainThread thread;
     private Background bg;
     private Player player;
-    private ArrayList<Arrow> smoke;
+    private ArrayList<Arrow> arrow;
     private ArrayList<Missile> missiles;
     private ArrayList<Missile> special;
     private ArrayList<Rainbow> rainbow;
@@ -99,7 +99,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.grassbg1));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.car), 111, 70, 3);
-        smoke = new ArrayList<>();
+        arrow = new ArrayList<>();
         missiles = new ArrayList<>();
         special = new ArrayList<>();
         rainbow = new ArrayList<>();
@@ -124,7 +124,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        if(event.getAction()==MotionEvent.ACTION_DOWN){
+        if(event.getAction()==MotionEvent.ACTION_DOWN || event.getAction()== MotionEvent.ACTION_POINTER_DOWN){
             x1 = (int)(event.getX()/ scaleFactorX) + clipBounds.left;
             y1= (int)(event.getY()/scaleFactorY) + clipBounds.top;
 
@@ -171,9 +171,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bg.update();
             player.update();
 
-            //add missiles on timer
             if(startShooting){
-                smoke.add(new Arrow(BitmapFactory.decodeResource(getResources(), R.drawable.arrow),player.getX() + player.getWidth(), player.getY()+ (player.getHeight()/2)));
+                arrow.add(new Arrow(BitmapFactory.decodeResource(getResources(), R.drawable.arrow),
+                        player.getX() + 20 , player.getY()+ (player.getHeight()/2)));
                 startShooting = false;
             }
 
@@ -187,10 +187,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(greenCount>=20){
                     greenCount = 0;
                     greenOnly = false;
+                    missileStartTime = System.nanoTime();
+                    rainbowStartTime = System.nanoTime();
+                    specialStartTime = System.nanoTime();
+
                 }
 
             }else if(!greenOnly){
-                System.out.println("no bow");
 
                 if (missileElapsed > (800)) {
 
@@ -225,17 +228,18 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //update missile
                 missiles.get(i).update();
 
-                if(collision(missiles.get(i),player))
+                if(collision(missiles.get(i), player))
                 {
                     missiles.get(i).drop(true);
                     player.setPlaying(false);
                     break;
                 }
 
-                for(int j = 0; j<smoke.size(); j++) {
-                    if (collision(missiles.get(i), smoke.get(j))) {
+                for(int j = 0; j<arrow.size(); j++) {
+                    if (collision(missiles.get(i), arrow.get(j))) {
                         missiles.get(i).drop(true);
-                        smoke.remove(j);
+                        arrow.remove(j);
+                        player.setScore(1);
                         break;
                     }
                 }
@@ -252,10 +256,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //update missile
                 rainbow.get(i).update();
 
-                for (int j = 0; j < smoke.size(); j++) {
-                    if (collision(rainbow.get(i), smoke.get(j))) {
+                for (int j = 0; j < arrow.size(); j++) {
+                    if (collision(rainbow.get(i), arrow.get(j))) {
                         rainbow.remove(i);
-                        smoke.remove(j);
+                        arrow.remove(j);
                         player.setScore(1);
                         break;
                     }
@@ -281,14 +285,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //update missile
                 special.get(i).update();
 
-                for (int j = 0; j < smoke.size(); j++) {
+                for (int j = 0; j < arrow.size(); j++) {
 
 
-                    if (collision(special.get(i), smoke.get(j))) {
+                    if (!special.get(i).getDrop() && collision(special.get(i), arrow.get(j))) {
                         greenOnly = true;
-                        for(int a = 0; a < special.size(); a++){
-                            special.get(a).drop(false);
-                        }
+                        special.get(i).drop(true);
                         for(int a = 0; a < missiles.size(); a++){
                             missiles.get(a).drop(true);
                         }
@@ -310,13 +312,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
-            for (int i = 0; i < smoke.size(); i++) {
-                smoke.get(i).update();
-                if (smoke.get(i).getX() > WIDTH + 10) {
-                    smoke.remove(i);
+            for (int i = 0; i < arrow.size(); i++) {
+                arrow.get(i).update();
+                if (arrow.get(i).getX() > WIDTH + 10) {
+                    arrow.remove(i);
                     break;
                 }
 
+                for (int j = 0; j < missiles.size(); j++) {
+                    if (collision(arrow.get(i), missiles.get(j))) {
+                        missiles.remove(j);
+                        arrow.remove(i);
+                        player.setScore(1);
+                        break;
+                    }
+                }
 
             }
 
@@ -346,8 +356,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     }
     public boolean collision(GameObject a, GameObject b)
     {
-        return (Rect.intersects(a.getRectangle(), b.getRectangle()));
+        /*int x1a = a.getX();
+        int x2a = a.getX() + a.getWidth();
+        int y1a = a.getY();
+        int y2a = a.getY() + a.getHeight();
 
+        int x1b = b.getX();
+        int x2b = b.getX() + b.getWidth();
+        int y1b = b.getY();
+        int y2b = b.getY() + b.getHeight();
+
+        return (x1a < x2b && x2a > x1b && y1a < y2b && y2a > y1b) ||
+               (x2a < x1b && x1a > x2b && y2a < y1b && y1a > y2b) ;
+        */
+        return a.getRectangle().intersect(b.getRectangle()) ||
+            b.getRectangle().intersect(a.getRectangle());
     }
 
     @Override
@@ -365,14 +388,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             clipBounds = canvas.getClipBounds();
             bg.draw(canvas);
 
+            for(Arrow sp: arrow)
+            {
+                sp.draw(canvas);
+            }
+
             if(!dissapear && started) {
                 player.draw(canvas);
             }
             //draw smokepuffs
-            for(Arrow sp: smoke)
-            {
-                sp.draw(canvas);
-            }
+
             //draw missiles
             for(Missile m: missiles)
             {
@@ -409,7 +434,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         missiles.clear();
         rainbow.clear();
         special.clear();
-        smoke.clear();
+        arrow.clear();
         player.setPlaying(false);
         greenOnly = false;
         greenCount = 0;

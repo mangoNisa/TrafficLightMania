@@ -50,7 +50,7 @@ public class Missile extends GameObject{
         if(!drop) {
             x -= speed;
         }else{
-            y += 16;
+            y += 30;
         }
         animation.update();
     }
@@ -71,4 +71,6 @@ public class Missile extends GameObject{
     public void drop(boolean b){
         drop = b;
     }
+
+    public boolean getDrop() { return this.drop; }
 }
